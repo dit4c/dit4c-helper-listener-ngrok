@@ -37,8 +37,6 @@ dist/dit4c-helper-listener-ngrok1.linux.amd64.aci: build/acbuild build/rootfs.ta
 	$(ACBUILD) copy notify_portal.sh /opt/bin/notify_portal.sh
 	$(ACBUILD) copy sort_by_latency.sh /opt/bin/sort_by_latency.sh
 	$(ACBUILD) set-name dit4c-helper-listener-ngrok1
-	$(ACBUILD) set-user listener
-	$(ACBUILD) set-group listener
 	$(ACBUILD) set-exec -- /opt/bin/run.sh
 	$(ACBUILD) write --overwrite dist/dit4c-helper-listener-ngrok1.linux.amd64.aci
 	$(ACBUILD) end
