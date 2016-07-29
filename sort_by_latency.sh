@@ -1,5 +1,7 @@
 #!/bin/sh
 
+XMLSTARLET=$(which xmlstarlet || which xml)
+
 # Write args to tempory file
 TMP=$(mktemp)
 for h in "$@"
@@ -10,7 +12,7 @@ done
 cat $TMP | \
   sed -e 's/:.*$//' | \
   xargs nmap -oX - -n -sn | \
-  xmlstarlet sel -t -m '//host' -v 'concat(times/@srtt, "
+  $XMLSTARLET sel -t -m '//host' -v 'concat(times/@srtt, "
 ")' | \
   paste - $TMP | \
   sort -n | \
