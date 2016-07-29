@@ -66,7 +66,7 @@ build/acbuild: | build
 build/jwt: | build/rkt
 	sudo -v && sudo build/rkt/rkt run --dns=8.8.8.8 --insecure-options=image \
     --volume output-dir,kind=host,source=`pwd`/build \
-    docker://golang:alpine \
+    docker://golang:latest \
     --set-env CGO_ENABLED=0 \
     --set-env GOOS=linux \
     --mount volume=output-dir,target=/output \
@@ -75,7 +75,7 @@ build/jwt: | build/rkt
 build/ngrok: | build/rkt
 	sudo -v && sudo build/rkt/rkt run --dns=8.8.8.8 --insecure-options=image \
     --volume output-dir,kind=host,source=`pwd`/build \
-    docker://golang:alpine \
+    docker://golang:latest \
     --set-env CGO_ENABLED=0 \
     --set-env GOOS=linux \
     --mount volume=output-dir,target=/output \
