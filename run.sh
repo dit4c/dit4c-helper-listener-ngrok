@@ -52,7 +52,7 @@ server_addr: $NGROK_SERVER
 trust_host_root_certs: true
 CONFIG
 
-ngrok -log=stdout -proto=$NGROK \
+ngrok -log=stdout -proto=$NGROK_PROTOCOL \
     $DIT4C_INSTANCE_HELPER_AUTH_HOST:$DIT4C_INSTANCE_HELPER_AUTH_PORT 2>&1 | \
   /opt/bin/listen_for_url.sh | \
   /opt/bin/notify_portal.sh
