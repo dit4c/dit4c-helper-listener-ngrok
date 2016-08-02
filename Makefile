@@ -68,16 +68,16 @@ build/jwt: | build/rkt
     --set-env CGO_ENABLED=0 \
     --set-env GOOS=linux \
     --mount volume=output-dir,target=/output \
-    --exec /bin/sh --  -c "apk add --update git && /usr/local/go/bin/go get -v --ldflags '-extldflags \"-static\"' github.com/knq/jwt/cmd/jwt && install -t /output -o $(shell id -u) -g $(shell id -g) /go/bin/jwt"
+    --exec /bin/sh --  -c "/usr/local/go/bin/go get -v --ldflags '-extldflags \"-static\"' github.com/knq/jwt/cmd/jwt && install -t /output -o $(shell id -u) -g $(shell id -g) /go/bin/jwt"
 
-build/ngrok: | build/rkt
+build/ngrok build/ngrokd: | build/rkt
 	sudo -v && sudo build/rkt/rkt run --dns=8.8.8.8 --insecure-options=image \
     --volume output-dir,kind=host,source=`pwd`/build \
     docker://golang:latest \
     --set-env CGO_ENABLED=0 \
     --set-env GOOS=linux \
     --mount volume=output-dir,target=/output \
-    --exec /bin/sh --  -c "apk add --update git make && git clone --depth 1 https://github.com/inconshreveable/ngrok.git && cd ngrok && make release-client && install -t /output -o $(shell id -u) -g $(shell id -g) /go/ngrok/bin/ngrok"
+    --exec /bin/sh --  -c "git clone --depth 1 https://github.com/inconshreveable/ngrok.git && cd ngrok && make release-client release-server && install -t /output -o $(shell id -u) -g $(shell id -g) /go/ngrok/bin/ngrok /go/ngrok/bin/ngrokd"
 
 build/bats: | build
 	curl -sL https://github.com/sstephenson/bats/archive/master.zip > build/bats.zip
