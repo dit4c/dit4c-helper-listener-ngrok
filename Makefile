@@ -9,7 +9,7 @@ ACBUILD=build/acbuild
 NGROK_PROTOCOLS=http https tcp
 IMAGES=$(foreach proto, $(NGROK_PROTOCOLS), dist/dit4c-helper-listener-ngrok1-$(proto).linux.amd64.aci)
 
-dist/SHA512SUM: dist/dit4c-helper-listener-ngrok1.linux.amd64.aci $(IMAGES)
+dist/SHA512SUM: dist/dit4c-helper-listener-ngrok1.linux.amd64.aci $(IMAGES) dist/ngrokd.linux.amd64.aci
 	sha512sum $^ | sed -e 's/dist\///' > dist/SHA512SUM
 
 dist/dit4c-helper-listener-ngrok1-%.linux.amd64.aci: dist/dit4c-helper-listener-ngrok1.linux.amd64.aci
@@ -39,6 +39,14 @@ dist/dit4c-helper-listener-ngrok1.linux.amd64.aci: build/acbuild build/rootfs.ta
 	$(ACBUILD) set-name dit4c-helper-listener-ngrok1
 	$(ACBUILD) set-exec -- /opt/bin/run.sh
 	$(ACBUILD) write --overwrite dist/dit4c-helper-listener-ngrok1.linux.amd64.aci
+	$(ACBUILD) end
+
+dist/ngrokd.linux.amd64.aci: build/acbuild build/rootfs.tar build/ngrokd | dist
+	rm -rf .acbuild
+	$(ACBUILD) --debug begin ./build/rootfs.tar
+	$(ACBUILD) copy build/ngrokd /usr/bin/ngrokd
+	$(ACBUILD) set-name dit4c-helper-listener-ngrok1
+	$(ACBUILD) write --overwrite dist/ngrokd.linux.amd64.aci
 	$(ACBUILD) end
 
 dist:

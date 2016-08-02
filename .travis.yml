@@ -19,6 +19,7 @@ deploy:
     - dist/dit4c-helper-listener-ngrok1-http.linux.amd64.aci
     - dist/dit4c-helper-listener-ngrok1-https.linux.amd64.aci
     - dist/dit4c-helper-listener-ngrok1-tcp.linux.amd64.aci
+    - dist/ngrokd.linux.amd64.aci
     - dist/SHA512SUM
   skip_cleanup: true
   on:
