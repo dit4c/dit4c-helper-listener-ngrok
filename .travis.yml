@@ -2,14 +2,6 @@ sudo: required
 dist: trusty
 language: generic
 script: make && make test
-addons:
-  apt:
-    packages:
-    - bc
-    - texinfo
-cache:
-  directories:
-  - "$HOME/.buildroot-ccache"
 deploy:
   provider: releases
   api_key:
