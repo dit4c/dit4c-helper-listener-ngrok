@@ -21,6 +21,7 @@ dist/dit4c-helper-listener-ngrok1-%.linux.amd64.aci: dist/dit4c-helper-listener-
 	sudo $(ACBUILD) set-name dit4c-helper-listener-ngrok1-$*
 	sudo $(ACBUILD) write --overwrite dist/dit4c-helper-listener-ngrok1-$*.linux.amd64.aci
 	sudo $(ACBUILD) end
+	sudo chown $(shell id -nu) dist/dit4c-helper-listener-ngrok1-$*.linux.amd64.aci
 
 dist/dit4c-helper-listener-ngrok1.linux.amd64.aci: build/acbuild build/client-base.aci build/ngrok build/jwt *.sh | dist
 	rm -rf .acbuild
@@ -45,6 +46,7 @@ dist/dit4c-helper-listener-ngrok1.linux.amd64.aci: build/acbuild build/client-ba
 	sudo $(ACBUILD) environment add HOME "/home/listener"
 	sudo $(ACBUILD) write --overwrite dist/dit4c-helper-listener-ngrok1.linux.amd64.aci
 	sudo $(ACBUILD) end
+	sudo chown $(shell id -nu) dist/dit4c-helper-listener-ngrok1.linux.amd64.aci
 
 dist/ngrokd.linux.amd64.aci: build/acbuild build/ngrokd | dist
 	rm -rf .acbuild
@@ -72,7 +74,8 @@ build/client-base.aci: $(RKT)
 		--exec /bin/sh -- -c \
 		"apk add --update bind-tools nmap curl && adduser -D listener && rm -rf /var/cache/apk/*"
 	sudo $(RKT) --dir=$(RKT_TMPDIR) export --overwrite `cat $(RKT_UUID_FILE)` $@
-	sudo -v && sudo $(RKT) --dir=$(RKT_TMPDIR) gc --grace-period=0s
+	sudo chown $(shell id -nu) build/client-base.aci
+	sudo $(RKT) --dir=$(RKT_TMPDIR) gc --grace-period=0s
 	sudo rm -rf $(RKT_TMPDIR) $(RKT_UUID_FILE)
 
 build/buildroot: | build
