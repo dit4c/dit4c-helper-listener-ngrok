@@ -45,7 +45,9 @@ dist/ngrokd.linux.amd64.aci: build/acbuild build/rootfs.tar build/ngrokd | dist
 	rm -rf .acbuild
 	$(ACBUILD) --debug begin ./build/rootfs.tar
 	$(ACBUILD) copy build/ngrokd /usr/bin/ngrokd
-	$(ACBUILD) set-name dit4c-helper-listener-ngrok1
+	$(ACBUILD) set-name ngrokd
+	$(ACBUILD) port add ngrok-client-port tcp 4443
+	$(ACBUILD) set-exec -- /usr/bin/ngrokd
 	$(ACBUILD) write --overwrite dist/ngrokd.linux.amd64.aci
 	$(ACBUILD) end
 
