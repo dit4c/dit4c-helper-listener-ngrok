@@ -45,7 +45,7 @@ if [[ "$DIT4C_INSTANCE_URI_UPDATE_URL" == "" ]]; then
 fi
 
 PORTAL_DOMAIN=$(echo $DIT4C_INSTANCE_URI_UPDATE_URL | awk -F/ '{print $3}')
-NGROK_SERVER=$(dig +short TXT $PORTAL_DOMAIN | grep -Eo "dit4c-router=[^\"]*" | cut -d= -f2 | xargs /opt/bin/sort_by_latency.sh | head)
+NGROK_SERVER=$(dig +short TXT $PORTAL_DOMAIN | grep -Eo "dit4c-router=[^\"]*" | cut -d= -f2 | xargs /opt/bin/sort_by_latency.sh | head -1)
 
 cat > ~/.ngrok <<CONFIG
 server_addr: $NGROK_SERVER
