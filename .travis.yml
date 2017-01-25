@@ -2,17 +2,24 @@ sudo: required
 dist: trusty
 language: generic
 script: make && make test
+before_deploy:
+- openssl aes-256-cbc -K $encrypted_6a26a24949eb_key -iv $encrypted_6a26a24949eb_iv -in signing.key.enc -out signing.key -d
+- make deploy
 deploy:
   provider: releases
   api_key:
     secure: aks/+VbczEAi1hiMXPv5D+bwKrAKkFC3apwpzcM9hdKrjYaHhMf6tFSy0EUqoSAc68itViYfWexjnnQ2wfcOKVWBlogTFsqb2Pfkkvu+8RfXFuzaG1qcGnf/UXHZm3o0jN4bFIb10WBE2SSEU1hcFWKQ8Es48N3L9i/WETDRgUCPsnU89lPMvlN649YGzmm4/1OSNGKjgtBPjU5RfOrGQalUcKzT3WfP+TMS8HXyPMr60j2nWuswNVqfNfbOyfojcbZq/Ybb6aXsVm4LWr+/oL+CqjmoAPxG8lIuv9D7Q0I8i6TXF1ATru04gi8ST/xFQlLf9WCxK62cnNq5Pc3LijN+w0WPR0OjzzYlxHqGujxqN4jJWXjbrQYFxKza9GBL3Rxe4wjB1D4AE7Lu2WCQS3FXY9jm+PkGi0Xpk83bI8DAkJgmOxX4nfJfYhmMzAZTDPuC9xxnw9ZmvoCal9zCc7KverLcdWIu6ivcO1BXIXMFu9loDraHb+OdF8sNE207qmACSCOPfUvoislsYOGtZxbaIRuCmhok0xzjxzdvUjBDJ9bPRzYWU5rmMFKRWMt0Fomv1Zhheys+0tctQl0WLWCAcZs894085IycEFHM7X/GIp6wxjVAnPEj5LV+fpQwKj15+sz+IEz9EYvZI+7H/Z4C9KMYTxIerMTB4eaPFQk=
   file:
     - dist/dit4c-helper-listener-ngrok1.linux.amd64.aci
+    - dist/dit4c-helper-listener-ngrok1.linux.amd64.aci.asc
     - dist/dit4c-helper-listener-ngrok1-http.linux.amd64.aci
+    - dist/dit4c-helper-listener-ngrok1-http.linux.amd64.aci.asc
     - dist/dit4c-helper-listener-ngrok1-https.linux.amd64.aci
+    - dist/dit4c-helper-listener-ngrok1-https.linux.amd64.aci.asc
     - dist/dit4c-helper-listener-ngrok1-tcp.linux.amd64.aci
+    - dist/dit4c-helper-listener-ngrok1-tcp.linux.amd64.aci.asc
     - dist/ngrokd.linux.amd64.aci
-    - dist/SHA512SUM
+    - dist/ngrokd.linux.amd64.aci.asc
   skip_cleanup: true
   on:
     tags: true

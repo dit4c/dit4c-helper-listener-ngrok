@@ -1,5 +1,5 @@
-.DEFAULT_GOAL := dist/SHA512SUM
-.PHONY: clean test
+.DEFAULT_GOAL := deploy
+.PHONY: clean test deploy
 
 CLIENT_INSTALLER_URL=https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
 BUILDROOT_VERSION=2016.05
@@ -7,11 +7,19 @@ ACBUILD_VERSION=0.3.1
 RKT_VERSION=1.11.0
 ACBUILD=build/acbuild
 RKT=build/rkt/rkt
+GPG=gpg2
 NGROK_PROTOCOLS=http https tcp
 IMAGES=$(foreach proto, $(NGROK_PROTOCOLS), dist/dit4c-helper-listener-ngrok1-$(proto).linux.amd64.aci)
+IMAGE_SIGNATURES=$(foreach image, $(IMAGES), $(image).asc)
 
-dist/SHA512SUM: dist/dit4c-helper-listener-ngrok1.linux.amd64.aci $(IMAGES) dist/ngrokd.linux.amd64.aci
-	sha512sum $^ | sed -e 's/dist\///' > dist/SHA512SUM
+deploy: $(IMAGE_SIGNATURES) dist/ngrokd.linux.amd64.aci.asc
+
+dist/%.aci.asc: dist/%.aci signing.key | build
+	$(eval TMP_KEYRING := $(shell mktemp -p ./build))
+	$(eval GPG_FLAGS := --batch --no-default-keyring --keyring $(TMP_KEYRING) )
+	$(GPG) $(GPG_FLAGS) --import signing.key
+	$(GPG) $(GPG_FLAGS) --armour --detach-sign $<
+	rm $(TMP_KEYRING)
 
 dist/dit4c-helper-listener-ngrok1-%.linux.amd64.aci: dist/dit4c-helper-listener-ngrok1.linux.amd64.aci
 	rm -rf .acbuild
