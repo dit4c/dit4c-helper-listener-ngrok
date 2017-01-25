@@ -17,11 +17,12 @@ images: $(IMAGES)
 deploy: $(IMAGE_SIGNATURES) dist/ngrokd.linux.amd64.aci.asc
 
 dist/%.aci.asc: dist/%.aci signing.key | build
-	$(eval TMP_KEYRING := $(shell mktemp -p ./build))
-	$(eval GPG_FLAGS := --batch --no-default-keyring --keyring $(TMP_KEYRING) )
+	$(eval TMP_PUBLIC_KEYRING := $(shell mktemp -p ./build))
+	$(eval TMP_SECRET_KEYRING := $(shell mktemp -p ./build))
+	$(eval GPG_FLAGS := --batch --no-default-keyring --keyring $(TMP_PUBLIC_KEYRING) --secret-keyring $(TMP_SECRET_KEYRING) )
 	$(GPG) $(GPG_FLAGS) --import signing.key
 	$(GPG) $(GPG_FLAGS) --armour --detach-sign $<
-	rm $(TMP_KEYRING)
+	rm $(TMP_PUBLIC_KEYRING) $(TMP_SECRET_KEYRING)
 
 dist/dit4c-helper-listener-ngrok1-%.linux.amd64.aci: dist/dit4c-helper-listener-ngrok1.linux.amd64.aci
 	rm -rf .acbuild
