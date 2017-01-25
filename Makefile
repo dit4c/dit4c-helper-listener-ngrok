@@ -23,8 +23,8 @@ dist/dit4c-helper-listener-ngrok1-%.linux.amd64.aci: dist/dit4c-helper-listener-
 	sudo $(ACBUILD) end
 	sudo chown $(shell id -nu) dist/dit4c-helper-listener-ngrok1-$*.linux.amd64.aci
 
-dist/dit4c-helper-listener-ngrok1.linux.amd64.aci: build/acbuild build/client-base.aci build/ngrok build/jwt *.sh | dist
-	rm -rf .acbuild
+dist/dit4c-helper-listener-ngrok1.linux.amd64.aci: build/acbuild build/client-base.aci build/ngrok build/jwt bin | dist
+	sudo rm -rf .acbuild
 	sudo -v
 	sudo $(ACBUILD) --debug begin ./build/client-base.aci
 	sudo $(ACBUILD) environment add DIT4C_INSTANCE_PRIVATE_KEY ""
@@ -36,10 +36,7 @@ dist/dit4c-helper-listener-ngrok1.linux.amd64.aci: build/acbuild build/client-ba
 	sudo $(ACBUILD) environment add NGROK_PROTOCOL ""
 	sudo $(ACBUILD) copy build/jwt /usr/bin/jwt
 	sudo $(ACBUILD) copy build/ngrok /usr/bin/ngrok
-	sudo $(ACBUILD) copy run.sh /opt/bin/run.sh
-	sudo $(ACBUILD) copy listen_for_url.sh /opt/bin/listen_for_url.sh
-	sudo $(ACBUILD) copy notify_portal.sh /opt/bin/notify_portal.sh
-	sudo $(ACBUILD) copy sort_by_latency.sh /opt/bin/sort_by_latency.sh
+	sudo $(ACBUILD) copy bin /opt/bin
 	sudo $(ACBUILD) set-name dit4c-helper-listener-ngrok1
 	sudo $(ACBUILD) set-exec -- /opt/bin/run.sh
 	sudo $(ACBUILD) set-user listener
@@ -72,7 +69,7 @@ build/client-base.aci: $(RKT)
 		--dns=8.8.8.8 \
 		docker://alpine:edge \
 		--exec /bin/sh -- -c \
-		"apk add --update bind-tools nmap curl && adduser -D listener && rm -rf /var/cache/apk/*"
+		"apk add --update bind-tools nmap nmap-nselibs nmap-scripts curl && adduser -D listener && rm -rf /var/cache/apk/*"
 	sudo $(RKT) --dir=$(RKT_TMPDIR) export --overwrite `cat $(RKT_UUID_FILE)` $@
 	sudo chown $(shell id -nu) build/client-base.aci
 	sudo $(RKT) --dir=$(RKT_TMPDIR) gc --grace-period=0s

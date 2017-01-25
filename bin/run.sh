@@ -45,14 +45,19 @@ if [[ "$DIT4C_INSTANCE_URI_UPDATE_URL" == "" ]]; then
 fi
 
 PORTAL_DOMAIN=$(echo $DIT4C_INSTANCE_URI_UPDATE_URL | awk -F/ '{print $3}')
-NGROK_SERVER=$(dig +short TXT $PORTAL_DOMAIN | grep -Eo "dit4c-router=[^\"]*" | cut -d= -f2 | xargs /opt/bin/sort_by_latency.sh | head -1)
 
-cat > ~/.ngrok <<CONFIG
+while true
+do
+  NGROK_SERVER=$(dig +short TXT $PORTAL_DOMAIN | grep -Eo "dit4c-router=[^\"]*" | cut -d= -f2 | xargs /opt/bin/sort_by_latency.sh | head -1)
+
+  cat > ~/.ngrok <<CONFIG
 server_addr: $NGROK_SERVER
 trust_host_root_certs: true
 CONFIG
 
-ngrok -log=stdout -proto=$NGROK_PROTOCOL \
-    $DIT4C_INSTANCE_HELPER_AUTH_HOST:$DIT4C_INSTANCE_HELPER_AUTH_PORT 2>&1 | \
-  /opt/bin/listen_for_url.sh | \
-  /opt/bin/notify_portal.sh
+  ngrok -log=stdout -proto=$NGROK_PROTOCOL \
+      $DIT4C_INSTANCE_HELPER_AUTH_HOST:$DIT4C_INSTANCE_HELPER_AUTH_PORT 2>&1 | \
+    (/opt/bin/listen_for_url.sh || pkill ngrok) | \
+    (/opt/bin/check_url_is_accessible.sh || pkill ngrok) | \
+    /opt/bin/notify_portal.sh
+done
