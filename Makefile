@@ -1,5 +1,5 @@
-.DEFAULT_GOAL := deploy
-.PHONY: clean test deploy
+.DEFAULT_GOAL := images
+.PHONY: clean test deploy images
 
 CLIENT_INSTALLER_URL=https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip
 BUILDROOT_VERSION=2016.05
@@ -11,6 +11,8 @@ GPG=gpg2
 NGROK_PROTOCOLS=http https tcp
 IMAGES=$(foreach proto, $(NGROK_PROTOCOLS), dist/dit4c-helper-listener-ngrok1-$(proto).linux.amd64.aci)
 IMAGE_SIGNATURES=$(foreach image, $(IMAGES), $(image).asc)
+
+images: $(IMAGES)
 
 deploy: $(IMAGE_SIGNATURES) dist/ngrokd.linux.amd64.aci.asc
 
